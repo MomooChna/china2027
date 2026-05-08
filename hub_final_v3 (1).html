@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>China 2027 — Hub Zen</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,300;0,400;1,300;1,400&family=Noto+Sans:wght@300;400&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0e0c0a;--bg2:#161210;--bg3:#1e1814;
+  --gold:#d4a84a;--gold-dim:rgba(212,168,74,.07);--gold-border:rgba(212,168,74,.14);
+  --text:#e8dcc8;--muted:rgba(232,220,200,.32);
+  --green:#6aaa55;--red:#c45555;--blue:#5588cc;--orange:#c8752a;
+}
+html,body{min-height:100vh;background:var(--bg);font-family:'Noto Serif',serif;color:var(--text);overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 10%,rgba(212,168,74,.04) 0%,transparent 50%),radial-gradient(ellipse at 80% 90%,rgba(200,117,42,.03) 0%,transparent 50%);pointer-events:none;z-index:0}
+
+/* CANVAS PÉTALES */
+#petals-canvas{position:fixed;inset:0;pointer-events:none;z-index:1}
+
+/* DÉCORS */
+.decor-bg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+
+/* KOI ANIMATION */
+.koi-wrap{position:fixed;bottom:60px;left:0;right:0;height:120px;pointer-events:none;z-index:1;overflow:hidden;opacity:.18}
+.koi1{position:absolute;animation:koiswim1 22s ease-in-out infinite}
+.koi2{position:absolute;animation:koiswim2 28s ease-in-out infinite;animation-delay:-12s}
+@keyframes koiswim1{
+  0%{left:-80px;top:40px;transform:scaleX(1) rotate(5deg)}
+  20%{top:20px;transform:scaleX(1) rotate(-3deg)}
+  45%{left:80%;top:60px;transform:scaleX(1) rotate(8deg)}
+  50%{left:85%;top:60px;transform:scaleX(-1) rotate(-5deg)}
+  75%{top:25px;transform:scaleX(-1) rotate(3deg)}
+  100%{left:-80px;top:40px;transform:scaleX(-1) rotate(-5deg)}
+}
+@keyframes koiswim2{
+  0%{left:110%;top:70px;transform:scaleX(-1) rotate(-6deg)}
+  25%{top:30px;transform:scaleX(-1) rotate(4deg)}
+  48%{left:5%;top:55px;transform:scaleX(-1) rotate(-8deg)}
+  52%{left:0%;top:55px;transform:scaleX(1) rotate(6deg)}
+  80%{top:40px;transform:scaleX(1) rotate(-3deg)}
+  100%{left:110%;top:70px;transform:scaleX(1) rotate(5deg)}
+}
+
+/* PAGE */
+.page{position:relative;z-index:2;max-width:900px;margin:0 auto;padding:60px 40px 120px}
+
+/* HEADER */
+.header{text-align:center;margin-bottom:60px;position:relative}
+.header-chinese{font-family:'Ma Shan Zheng',cursive;font-size:80px;color:rgba(212,168,74,.1);letter-spacing:.1em;line-height:1;margin-bottom:-22px;position:relative;z-index:0;transition:all .3s}
+.header-chinese:hover{color:rgba(212,168,74,.22)}
+.header-title{font-size:44px;font-weight:300;color:var(--text);letter-spacing:.2em;line-height:1;position:relative;z-index:1}
+.header-title em{font-style:italic;color:var(--gold)}
+.header-sub{font-family:'Noto Sans',sans-serif;font-size:10px;color:var(--muted);letter-spacing:.3em;text-transform:uppercase;margin-top:12px}
+
+/* SÉPARATEUR */
+.sep{display:flex;align-items:center;gap:16px;margin:0 auto 50px;max-width:400px}
+.sep-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold-border),transparent)}
+.sep-icon{color:var(--gold);opacity:.35;font-size:13px}
+
+/* LUNE + CARACTÈRE DU JOUR */
+.moon-char-row{display:flex;align-items:center;justify-content:center;gap:60px;margin-bottom:50px}
+
+/* LUNE */
+.moon-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+.moon-svg{width:70px;height:70px}
+.moon-label{font-family:'Noto Sans',sans-serif;font-size:9px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase}
+
+/* CARACTÈRE DU JOUR */
+.char-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+.char-hanzi{font-family:'Ma Shan Zheng',cursive;font-size:64px;color:var(--gold);line-height:1;text-shadow:0 0 30px rgba(212,168,74,.2);animation:charfade 3s ease-in-out infinite alternate}
+@keyframes charfade{0%{text-shadow:0 0 20px rgba(212,168,74,.15)}100%{text-shadow:0 0 40px rgba(212,168,74,.35)}}
+.char-pinyin{font-family:'Noto Sans',sans-serif;font-size:12px;color:var(--muted);letter-spacing:.1em}
+.char-meaning{font-family:'Noto Sans',sans-serif;font-size:10px;color:rgba(212,168,74,.5);letter-spacing:.15em;text-transform:uppercase}
+
+/* COUNTDOWN */
+.countdown{text-align:center;margin-bottom:12px}
+.countdown-label{font-family:'Noto Sans',sans-serif;font-size:9px;color:var(--muted);letter-spacing:.3em;text-transform:uppercase;margin-bottom:18px}
+.countdown-units{display:flex;align-items:center;justify-content:center;gap:0}
+.cd-unit{text-align:center;padding:0 26px;position:relative}
+.cd-unit+.cd-unit::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);height:28px;width:1px;background:var(--gold-border)}
+.cd-num{font-size:42px;font-weight:300;color:var(--gold);line-height:1;letter-spacing:.05em}
+.cd-name{font-family:'Noto Sans',sans-serif;font-size:9px;color:var(--muted);letter-spacing:.2em;margin-top:4px;text-transform:uppercase}
+
+/* CHEMIN PROGRESSION */
+.path-wrap{max-width:600px;margin:24px auto 8px;position:relative}
+.path-label{display:flex;justify-content:space-between;font-family:'Noto Sans',sans-serif;font-size:9px;color:var(--muted);letter-spacing:.12em;margin-bottom:8px}
+.path-track{position:relative;height:3px;background:rgba(212,168,74,.08)}
+.path-fill{height:100%;background:linear-gradient(90deg,rgba(212,168,74,.3),var(--gold));transition:width 1.5s ease;position:relative}
+.path-fill::after{content:'🏃';position:absolute;right:-8px;top:-10px;font-size:16px;animation:runner .8s ease-in-out infinite alternate}
+@keyframes runner{0%{transform:translateY(0)}100%{transform:translateY(-3px)}}
+.path-dest{position:absolute;right:0;top:-10px;font-size:14px}
+.path-pct{font-family:'Noto Sans',sans-serif;font-size:9px;color:rgba(212,168,74,.35);letter-spacing:.15em;text-align:center;margin-top:8px}
+
+/* SEMAINES RESTANTES */
+.weeks-label{font-family:'Noto Sans',sans-serif;font-size:9px;color:rgba(212,168,74,.3);letter-spacing:.15em;text-align:center;margin-top:4px}
+
+/* CITATION */
+.citation-wrap{background:rgba(212,168,74,.04);border:1px solid var(--gold-border);padding:30px 40px;margin-bottom:50px;text-align:center;position:relative}
+.citation-wrap::before{content:'"';position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-family:'Noto Serif',serif;font-size:56px;color:rgba(212,168,74,.14);line-height:1}
+.citation-text{font-size:17px;font-weight:300;color:var(--text);line-height:1.85;font-style:italic;letter-spacing:.02em}
+.citation-author{font-family:'Noto Sans',sans-serif;font-size:10px;color:var(--muted);letter-spacing:.2em;margin-top:14px;text-transform:uppercase}
+.citation-origin{font-family:'Noto Sans',sans-serif;font-size:9px;color:rgba(212,168,74,.28);letter-spacing:.14em;margin-top:4px}
+
+/* MODULES */
+.modules-label{font-family:'Noto Sans',sans-serif;font-size:9px;color:var(--muted);letter-spacing:.3em;text-transform:uppercase;text-align:center;margin-bottom:24px}
+.modules-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--gold-border);border:1px solid var(--gold-border);overflow:hidden}
+.module{background:var(--bg2);padding:26px 26px 22px;cursor:pointer;transition:all .3s;text-decoration:none;display:block;position:relative;overflow:hidden}
+.module::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 0% 0%,rgba(212,168,74,.04),transparent 60%);opacity:0;transition:opacity .3s}
+.module:hover{background:var(--bg3)}
+.module:hover::after{opacity:1}
+.module:hover .mod-arrow{opacity:1;transform:translateX(4px)}
+.module:hover .mod-icon{transform:scale(1.1)}
+.mod-num{font-family:'Noto Sans',sans-serif;font-size:9px;color:rgba(212,168,74,.28);letter-spacing:.2em;margin-bottom:12px}
+.mod-icon{font-size:24px;display:block;margin-bottom:12px;transition:transform .3s}
+.mod-name{font-size:19px;font-weight:300;color:var(--text);letter-spacing:.15em;margin-bottom:5px}
+.mod-desc{font-family:'Noto Sans',sans-serif;font-size:11px;color:var(--muted);line-height:1.65;margin-bottom:10px}
+
+/* MINI RECAP MODULE */
+.mod-recap{display:flex;flex-direction:column;gap:3px;padding:8px 10px;background:rgba(212,168,74,.04);border:1px solid rgba(212,168,74,.08);margin-bottom:10px}
+.mod-recap-item{font-family:'Noto Sans',sans-serif;font-size:10px;color:rgba(232,220,200,.4);display:flex;justify-content:space-between}
+.mod-recap-val{color:var(--gold);font-weight:400}
+
+.mod-dot{display:inline-flex;align-items:center;gap:5px;font-family:'Noto Sans',sans-serif;font-size:9px;color:rgba(212,168,74,.28);letter-spacing:.12em}
+.dot{width:4px;height:4px;border-radius:50%;background:var(--gold);animation:pulse 2.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.2}50%{opacity:.8}}
+.mod-arrow{position:absolute;bottom:22px;right:22px;font-size:14px;color:var(--gold);opacity:0;transition:all .3s}
+
+/* FOOTER */
+.footer{text-align:center;margin-top:50px;padding-top:24px;border-top:1px solid var(--gold-border);display:flex;align-items:center;justify-content:space-between}
+.footer-dot{width:4px;height:4px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite}
+.footer-text{font-family:'Noto Sans',sans-serif;font-size:9px;color:rgba(212,168,74,.28);letter-spacing:.2em}
+.footer-time{font-family:'Noto Sans',sans-serif;font-size:9px;color:var(--muted);letter-spacing:.1em}
+</style>
+</head>
+<body>
+
+<!-- CANVAS PÉTALES -->
+<canvas id="petals-canvas"></canvas>
+
+<!-- DÉCORS SVG -->
+<div class="decor-bg">
+<svg width="100%" height="100%" viewBox="0 0 1200 900" preserveAspectRatio="xMidYMid slice">
+  <!-- Montagnes encre fond -->
+  <path d="M0,520 L80,320 L160,420 L280,250 L400,380 L520,200 L640,350 L760,180 L880,300 L1000,160 L1100,260 L1200,200 L1200,520Z" fill="rgba(15,12,8,.55)"/>
+  <path d="M0,545 L60,380 L140,460 L240,305 L360,430 L480,265 L600,388 L720,225 L840,348 L960,195 L1060,298 L1160,238 L1200,268 L1200,545Z" fill="rgba(22,18,14,.65)"/>
+  <!-- Bambous gauche -->
+  <line x1="42" y1="900" x2="42" y2="340" stroke="#2a1f14" stroke-width="4.5"/>
+  <ellipse cx="42" cy="620" rx="2" ry="3" fill="#1a1208"/>
+  <ellipse cx="42" cy="500" rx="2" ry="3" fill="#1a1208"/>
+  <ellipse cx="42" cy="405" rx="2" ry="3" fill="#1a1208"/>
+  <line x1="42" y1="615" x2="5" y2="588" stroke="#2a1f14" stroke-width="1.8"/>
+  <ellipse cx="-8" cy="583" rx="20" ry="9" fill="rgba(70,110,50,.28)" transform="rotate(-18,-8,583)"/>
+  <line x1="42" y1="615" x2="82" y2="586" stroke="#2a1f14" stroke-width="1.8"/>
+  <ellipse cx="94" cy="581" rx="18" ry="8" fill="rgba(70,110,50,.24)" transform="rotate(16,94,581)"/>
+  <line x1="42" y1="495" x2="2" y2="468" stroke="#2a1f14" stroke-width="1.5"/>
+  <ellipse cx="-10" cy="464" rx="18" ry="8" fill="rgba(70,110,50,.22)" transform="rotate(-22,-10,464)"/>
+  <line x1="42" y1="495" x2="82" y2="467" stroke="#2a1f14" stroke-width="1.5"/>
+  <ellipse cx="94" cy="462" rx="16" ry="7" fill="rgba(70,110,50,.2)" transform="rotate(20,94,462)"/>
+  <line x1="42" y1="400" x2="10" y2="374" stroke="#2a1f14" stroke-width="1.2"/>
+  <ellipse cx="-2" cy="370" rx="15" ry="6" fill="rgba(70,110,50,.18)" transform="rotate(-15,-2,370)"/>
+  <line x1="18" y1="900" x2="18" y2="480" stroke="#2a1f14" stroke-width="3"/>
+  <line x1="18" y1="680" x2="-12" y2="656" stroke="#2a1f14" stroke-width="1.2"/>
+  <ellipse cx="-22" cy="652" rx="14" ry="6" fill="rgba(70,110,50,.18)" transform="rotate(-14,-22,652)"/>
+  <line x1="65" y1="900" x2="65" y2="420" stroke="#2a1f14" stroke-width="3.5"/>
+  <line x1="65" y1="660" x2="96" y2="635" stroke="#2a1f14" stroke-width="1.4"/>
+  <ellipse cx="108" cy="630" rx="16" ry="7" fill="rgba(70,110,50,.2)" transform="rotate(16,108,630)"/>
+  <!-- Bambous droite -->
+  <line x1="1158" y1="900" x2="1158" y2="300" stroke="#2a1f14" stroke-width="4.5"/>
+  <ellipse cx="1158" cy="580" rx="2" ry="3" fill="#1a1208"/>
+  <ellipse cx="1158" cy="460" rx="2" ry="3" fill="#1a1208"/>
+  <ellipse cx="1158" cy="365" rx="2" ry="3" fill="#1a1208"/>
+  <line x1="1158" y1="575" x2="1192" y2="548" stroke="#2a1f14" stroke-width="1.8"/>
+  <ellipse cx="1204" cy="543" rx="20" ry="9" fill="rgba(70,110,50,.26)" transform="rotate(18,1204,543)"/>
+  <line x1="1158" y1="575" x2="1120" y2="550" stroke="#2a1f14" stroke-width="1.8"/>
+  <ellipse cx="1108" cy="546" rx="18" ry="8" fill="rgba(70,110,50,.22)" transform="rotate(-16,1108,546)"/>
+  <line x1="1158" y1="455" x2="1192" y2="428" stroke="#2a1f14" stroke-width="1.5"/>
+  <ellipse cx="1204" cy="423" rx="18" ry="8" fill="rgba(70,110,50,.2)" transform="rotate(20,1204,423)"/>
+  <line x1="1158" y1="360" x2="1122" y2="334" stroke="#2a1f14" stroke-width="1.2"/>
+  <ellipse cx="1110" cy="330" rx="16" ry="7" fill="rgba(70,110,50,.18)" transform="rotate(-18,1110,330)"/>
+  <line x1="1182" y1="900" x2="1182" y2="440" stroke="#2a1f14" stroke-width="3"/>
+  <line x1="1182" y1="660" x2="1210" y2="636" stroke="#2a1f14" stroke-width="1.2"/>
+  <ellipse cx="1220" cy="632" rx="14" ry="6" fill="rgba(70,110,50,.17)" transform="rotate(14,1220,632)"/>
+  <line x1="1132" y1="900" x2="1132" y2="380" stroke="#2a1f14" stroke-width="3.5"/>
+  <line x1="1132" y1="620" x2="1100" y2="595" stroke="#2a1f14" stroke-width="1.4"/>
+  <ellipse cx="1088" cy="590" rx="16" ry="7" fill="rgba(70,110,50,.19)" transform="rotate(-16,1088,590)"/>
+  <!-- Lotus droite bas -->
+  <g transform="translate(1060,835)" opacity=".14">
+    <ellipse cx="0" cy="0" rx="9" ry="22" fill="#c8752a" transform="rotate(-25)"/>
+    <ellipse cx="0" cy="0" rx="9" ry="22" fill="#c8752a" transform="rotate(0)"/>
+    <ellipse cx="0" cy="0" rx="9" ry="22" fill="#c8752a" transform="rotate(25)"/>
+    <ellipse cx="0" cy="0" rx="9" ry="22" fill="#d4a84a" transform="rotate(-12)"/>
+    <ellipse cx="0" cy="0" rx="9" ry="22" fill="#d4a84a" transform="rotate(12)"/>
+    <circle cx="0" cy="-6" r="7" fill="#e8c870" opacity=".5"/>
+    <line x1="0" y1="22" x2="0" y2="50" stroke="#2a4a1a" stroke-width="2"/>
+  </g>
+  <g transform="translate(1100,855)" opacity=".1">
+    <ellipse cx="0" cy="0" rx="7" ry="17" fill="#c8752a" transform="rotate(-20)"/>
+    <ellipse cx="0" cy="0" rx="7" ry="17" fill="#c8752a" transform="rotate(20)"/>
+    <circle cx="0" cy="-4" r="5" fill="#e8c870" opacity=".4"/>
+    <line x1="0" y1="17" x2="0" y2="40" stroke="#2a4a1a" stroke-width="1.5"/>
+  </g>
+  <!-- Vague eau -->
+  <path d="M0,875 Q200,860 400,870 Q600,880 800,865 Q1000,850 1200,862 L1200,900 L0,900 Z" fill="rgba(212,168,74,.025)"/>
+  <path d="M0,882 Q300,872 600,878 Q900,884 1200,875" fill="none" stroke="rgba(212,168,74,.05)" stroke-width="1"/>
+  <!-- Cercles zen -->
+  <circle cx="600" cy="450" r="220" fill="none" stroke="rgba(212,168,74,.018)" stroke-width="1"/>
+  <circle cx="600" cy="450" r="320" fill="none" stroke="rgba(212,168,74,.012)" stroke-width="1"/>
+</svg>
+</div>
+
+<!-- KOI -->
+<div class="koi-wrap">
+  <div class="koi1">
+    <svg width="70" height="28" viewBox="0 0 70 28">
+      <ellipse cx="38" cy="14" rx="28" ry="11" fill="#c8752a" opacity=".9"/>
+      <path d="M10,14 C0,6 -4,9 -2,14 C-4,19 0,22 10,14" fill="#c8752a"/>
+      <ellipse cx="42" cy="10" rx="5" ry="3" fill="#d4a84a" opacity=".6"/>
+      <ellipse cx="42" cy="18" rx="4" ry="2.5" fill="#d4a84a" opacity=".5"/>
+      <circle cx="52" cy="11" r="2.5" fill="#1a1208"/>
+      <circle cx="53" cy="11" r="1" fill="rgba(255,255,255,.4)"/>
+      <path d="M10,10 Q20,14 10,18" fill="none" stroke="#a05a20" stroke-width="1" opacity=".4"/>
+      <path d="M20,8 Q32,14 20,20" fill="none" stroke="#a05a20" stroke-width="1" opacity=".3"/>
+    </svg>
+  </div>
+  <div class="koi2">
+    <svg width="58" height="23" viewBox="0 0 58 23">
+      <ellipse cx="32" cy="11.5" rx="23" ry="9" fill="#d4a84a" opacity=".85"/>
+      <path d="M9,11.5 C1,5 -2,7.5 -1,11.5 C-2,15.5 1,18 9,11.5" fill="#d4a84a"/>
+      <ellipse cx="35" cy="8" rx="4" ry="2.5" fill="#e8c870" opacity=".5"/>
+      <circle cx="42" cy="9" r="2" fill="#1a1208"/>
+      <circle cx="43" cy="9" r=".8" fill="rgba(255,255,255,.4)"/>
+    </svg>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-chinese">中国之旅</div>
+    <div class="header-title">CHINA <em>2027</em></div>
+    <div class="header-sub">L'espace de Momo · Hub Central</div>
+  </div>
+
+  <div class="sep"><div class="sep-line"></div><div class="sep-icon">◈</div><div class="sep-line"></div></div>
+
+  <!-- LUNE + CARACTÈRE DU JOUR -->
+  <div class="moon-char-row">
+    <div class="moon-wrap">
+      <svg class="moon-svg" viewBox="0 0 70 70" id="moon-svg"></svg>
+      <div class="moon-label" id="moon-label">Pleine lune</div>
+    </div>
+    <div class="char-wrap">
+      <div class="char-hanzi" id="char-hanzi">勇</div>
+      <div class="char-pinyin" id="char-pinyin">Yǒng</div>
+      <div class="char-meaning" id="char-meaning">Courage</div>
+    </div>
+    <div style="text-align:center;opacity:.6">
+      <div style="font-family:'Noto Sans',sans-serif;font-size:9px;color:var(--muted);letter-spacing:.2em;margin-bottom:6px">CITATION DU JOUR</div>
+      <div style="font-size:11px;color:rgba(212,168,74,.5);font-style:italic" id="cite-mini">Jour 126 sur 731</div>
+    </div>
+  </div>
+
+  <!-- COUNTDOWN -->
+  <div class="countdown">
+    <div class="countdown-label">Compte à rebours · China 2027</div>
+    <div class="countdown-units">
+      <div class="cd-unit"><div class="cd-num" id="cd-d">---</div><div class="cd-name">Jours</div></div>
+      <div class="cd-unit"><div class="cd-num" id="cd-h">--</div><div class="cd-name">Heures</div></div>
+      <div class="cd-unit"><div class="cd-num" id="cd-m">--</div><div class="cd-name">Min</div></div>
+      <div class="cd-unit"><div class="cd-num" id="cd-s">--</div><div class="cd-name">Sec</div></div>
+    </div>
+    <div class="path-wrap">
+      <div class="path-label"><span>Début · Jan 2025</span><span>🇨🇳 Chine · Jan 2027</span></div>
+      <div class="path-track">
+        <div class="path-fill" id="prog-fill" style="width:0%">
+        </div>
+        <div class="path-dest">🇨🇳</div>
+      </div>
+      <div class="path-pct" id="prog-pct">0% accompli</div>
+    </div>
+    <div class="weeks-label" id="weeks-label">— semaines d'entraînement restantes</div>
+  </div>
+
+  <div class="sep" style="margin-top:40px"><div class="sep-line"></div><div class="sep-icon">◈</div><div class="sep-line"></div></div>
+
+  <!-- CITATION -->
+  <div class="citation-wrap">
+    <div class="citation-text" id="citation-text">"Le voyage de mille li commence par un seul pas."</div>
+    <div class="citation-author" id="citation-author">— Laozi</div>
+    <div class="citation-origin" id="citation-origin">Tao Te Ching · Chine · VIe siècle av. J.-C.</div>
+  </div>
+
+  <div class="sep"><div class="sep-line"></div><div class="sep-icon">◈</div><div class="sep-line"></div></div>
+
+  <!-- MODULES -->
+  <div class="modules-label">Modules</div>
+  <div class="modules-grid">
+
+    <a class="module" href="https://MomooChna.github.io/china2027-velo/">
+      <div class="mod-num">01</div>
+      <span class="mod-icon">🚴</span>
+      <div class="mod-name">Vélo</div>
+      <div class="mod-desc">Sorties, performance & kilométrage</div>
+      <div class="mod-recap">
+        <div class="mod-recap-item"><span>Dernière sortie</span><span class="mod-recap-val" id="recap-velo-km">— km</span></div>
+        <div class="mod-recap-item"><span>Cette semaine</span><span class="mod-recap-val" id="recap-velo-sem">— km</span></div>
+        <div class="mod-recap-item"><span>BPM moyen</span><span class="mod-recap-val" id="recap-velo-bpm">— bpm</span></div>
+      </div>
+      <div class="mod-dot"><div class="dot"></div>En ligne</div>
+      <div class="mod-arrow">→</div>
+    </a>
+
+    <a class="module" href="https://MomooChna.github.io/china2027-nutrition/">
+      <div class="mod-num">02</div>
+      <span class="mod-icon">🥗</span>
+      <div class="mod-name">Nutrition</div>
+      <div class="mod-desc">Repas, macros & objectifs caloriques</div>
+      <div class="mod-recap">
+        <div class="mod-recap-item"><span>Objectif kcal</span><span class="mod-recap-val">2 440 kcal</span></div>
+        <div class="mod-recap-item"><span>Protéines cible</span><span class="mod-recap-val">170g / jour</span></div>
+        <div class="mod-recap-item"><span>Idées repas</span><span class="mod-recap-val">9 suggestions</span></div>
+      </div>
+      <div class="mod-dot"><div class="dot"></div>En ligne</div>
+      <div class="mod-arrow">→</div>
+    </a>
+
+    <a class="module" href="https://MomooChna.github.io/china2027-corps/">
+      <div class="mod-num">03</div>
+      <span class="mod-icon">⚡</span>
+      <div class="mod-name">Corps</div>
+      <div class="mod-desc">Poids, composition & mensurations</div>
+      <div class="mod-recap">
+        <div class="mod-recap-item"><span>Pesée</span><span class="mod-recap-val">Lundi matin</span></div>
+        <div class="mod-recap-item"><span>Objectif poids</span><span class="mod-recap-val">À définir</span></div>
+        <div class="mod-recap-item"><span>Hologramme</span><span class="mod-recap-val">Actif ✓</span></div>
+      </div>
+      <div class="mod-dot"><div class="dot"></div>En ligne</div>
+      <div class="mod-arrow">→</div>
+    </a>
+
+    <a class="module" href="https://MomooChna.github.io/china2027-trading/">
+      <div class="mod-num">04</div>
+      <span class="mod-icon">📈</span>
+      <div class="mod-name">Trading</div>
+      <div class="mod-desc">Prop firms, drawdown & performances</div>
+      <div class="mod-recap">
+        <div class="mod-recap-item"><span>Comptes actifs</span><span class="mod-recap-val">2 comptes</span></div>
+        <div class="mod-recap-item"><span>Capital total</span><span class="mod-recap-val">$100,000</span></div>
+        <div class="mod-recap-item"><span>Phase</span><span class="mod-recap-val">Phase 1 × 2</span></div>
+      </div>
+      <div class="mod-dot"><div class="dot"></div>En ligne</div>
+      <div class="mod-arrow">→</div>
+    </a>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="footer-dot"></div>
+      <div class="footer-text">TOUS SYSTÈMES ACTIFS</div>
+    </div>
+    <div class="footer-time" id="footer-time">—</div>
+  </div>
+
+</div>
+
+<script>
+// ===== PÉTALES =====
+const canvas = document.getElementById('petals-canvas');
+const ctx = canvas.getContext('2d');
+let petals = [];
+
+function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
+resizeCanvas();
+window.addEventListener('resize',resizeCanvas);
+
+function createPetal(){
+  return {
+    x: Math.random()*canvas.width,
+    y: -20,
+    size: Math.random()*8+4,
+    speedY: Math.random()*1.2+0.4,
+    speedX: Math.random()*0.8-0.4,
+    rotation: Math.random()*Math.PI*2,
+    rotSpeed: (Math.random()-0.5)*0.04,
+    opacity: Math.random()*0.35+0.08,
+    color: Math.random()>0.5?'rgba(200,117,42,':'rgba(212,168,74,'
+  };
+}
+
+for(let i=0;i<18;i++){
+  const p = createPetal();
+  p.y = Math.random()*canvas.height;
+  petals.push(p);
+}
+
+function drawPetal(p){
+  ctx.save();
+  ctx.translate(p.x,p.y);
+  ctx.rotate(p.rotation);
+  ctx.globalAlpha = p.opacity;
+  ctx.fillStyle = p.color+p.opacity+')';
+  ctx.beginPath();
+  ctx.ellipse(0,0,p.size,p.size*0.45,0,0,Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function animatePetals(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  petals.forEach(p=>{
+    p.y += p.speedY;
+    p.x += p.speedX + Math.sin(p.y*0.02)*0.3;
+    p.rotation += p.rotSpeed;
+    if(p.y > canvas.height+20){
+      Object.assign(p,createPetal());
+    }
+    drawPetal(p);
+  });
+  if(Math.random()<0.02 && petals.length<25) petals.push(createPetal());
+  requestAnimationFrame(animatePetals);
+}
+animatePetals();
+
+// ===== LUNE =====
+function drawMoon(){
+  const now = new Date();
+  const lunarDay = ((now - new Date('2000-01-06')) / 86400000) % 29.53;
+  const phase = lunarDay / 29.53;
+  const svg = document.getElementById('moon-svg');
+  const cx=35,cy=35,r=28;
+  let moonPath='',label='';
+  if(phase<0.03||phase>0.97){label='Nouvelle lune';moonPath=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="rgba(212,168,74,.08)" stroke="rgba(212,168,74,.2)" stroke-width="1"/>`}
+  else if(phase<0.25){
+    label='Croissant croissant';
+    const f=phase/0.25;
+    moonPath=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="rgba(212,168,74,.85)"/><ellipse cx="${cx}" cy="${cy}" rx="${r*(1-f*1.8)}" ry="${r}" fill="#0e0c0a"/>`;
+  } else if(phase<0.27){label='Premier quartier';moonPath=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="rgba(212,168,74,.85)"/><rect x="${cx}" y="${cy-r}" width="${r}" height="${r*2}" fill="#0e0c0a"/>`;
+  } else if(phase<0.5){
+    label='Gibbeuse croissante';
+    const f=(phase-0.27)/0.23;
+    moonPath=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="rgba(212,168,74,.85)"/><ellipse cx="${cx}" cy="${cy}" rx="${r*f*1.5}" ry="${r}" fill="#0e0c0a"/>`;
+  } else if(phase<0.53){label='Pleine lune';moonPath=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="rgba(212,168,74,.9)" style="filter:drop-shadow(0 0 12px rgba(212,168,74,.3))"/><circle cx="22" cy="28" r="4" fill="rgba(0,0,0,.08)"/><circle cx="40" cy="22" r="3" fill="rgba(0,0,0,.06)"/><circle cx="32" cy="42" r="2.5" fill="rgba(0,0,0,.06)"/>`;
+  } else if(phase<0.75){
+    label='Gibbeuse décroissante';
+    const f=(phase-0.53)/0.22;
+    moonPath=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="rgba(212,168,74,.85)"/><ellipse cx="${cx}" cy="${cy}" rx="${r*f*1.5}" ry="${r}" fill="#0e0c0a" transform="translate(${r*f*0.8},0)"/>`;
+  } else if(phase<0.77){label='Dernier quartier';moonPath=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="rgba(212,168,74,.85)"/><rect x="${cx-r}" y="${cy-r}" width="${r}" height="${r*2}" fill="#0e0c0a"/>`;
+  } else {
+    label='Croissant décroissant';
+    moonPath=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="rgba(212,168,74,.85)"/><ellipse cx="${cx+r*0.5}" cy="${cy}" rx="${r*1.2}" ry="${r}" fill="#0e0c0a"/>`;
+  }
+  svg.innerHTML=`<defs><clipPath id="mc"><circle cx="${cx}" cy="${cy}" r="${r}"/></clipPath></defs><g clip-path="url(#mc)">${moonPath}</g>`;
+  document.getElementById('moon-label').textContent=label;
+}
+drawMoon();
+
+// ===== CARACTÈRE DU JOUR =====
+const CHARS=[
+  {h:'勇',p:'Yǒng',m:'Courage'},{h:'力',p:'Lì',m:'Force'},{h:'心',p:'Xīn',m:'Cœur'},
+  {h:'志',p:'Zhì',m:'Volonté'},{h:'行',p:'Xíng',m:'Action'},{h:'道',p:'Dào',m:'Voie'},
+  {h:'健',p:'Jiàn',m:'Santé'},{h:'強',p:'Qiáng',m:'Puissance'},{h:'进',p:'Jìn',m:'Progrès'},
+  {h:'梦',p:'Mèng',m:'Rêve'},{h:'旅',p:'Lǚ',m:'Voyage'},{h:'远',p:'Yuǎn',m:'Lointain'},
+  {h:'望',p:'Wàng',m:'Espoir'},{h:'忍',p:'Rěn',m:'Persévérance'},{h:'学',p:'Xué',m:'Apprentissage'},
+  {h:'新',p:'Xīn',m:'Nouveau'},{h:'胜',p:'Shèng',m:'Victoire'},{h:'命',p:'Mìng',m:'Destin'},
+  {h:'气',p:'Qì',m:'Énergie'},{h:'静',p:'Jìng',m:'Sérénité'},{h:'山',p:'Shān',m:'Montagne'},
+  {h:'水',p:'Shuǐ',m:'Eau'},{h:'天',p:'Tiān',m:'Ciel'},{h:'路',p:'Lù',m:'Chemin'},
+  {h:'光',p:'Guāng',m:'Lumière'},{h:'真',p:'Zhēn',m:'Vérité'},{h:'善',p:'Shàn',m:'Bonté'},
+  {h:'美',p:'Měi',m:'Beauté'},{h:'福',p:'Fú',m:'Bonheur'},{h:'龙',p:'Lóng',m:'Dragon'},
+];
+
+function getDayIndex(){
+  // Jour de l annee 1-365 toujours positif
+  const now=new Date();
+  const start=new Date(now.getFullYear(),0,0);
+  return Math.floor((now-start)/86400000);
+}
+const dayIdx=getDayIndex();
+const char=CHARS[dayIdx%CHARS.length];
+document.getElementById('char-hanzi').textContent=char.h;
+document.getElementById('char-pinyin').textContent=char.p;
+document.getElementById('char-meaning').textContent=char.m;
+
+// ===== CITATIONS =====
+const CITATIONS=[
+  {text:"Le voyage de mille li commence par un seul pas.",author:"Laozi",origin:"Tao Te Ching · Chine · VIe s. av. J.-C."},
+  {text:"La résilience n'est pas ce qui t'arrive, c'est ce que tu fais de ce qui t'arrive.",author:"Viktor Frankl",origin:"Psychiatre autrichien · 1905-1997"},
+  {text:"Ce n'est pas la montagne que nous conquérons, mais nous-mêmes.",author:"Sir Edmund Hillary",origin:"Alpiniste néo-zélandais · 1919-2008"},
+  {text:"Le succès, c'est d'aller d'échec en échec sans perdre son enthousiasme.",author:"Winston Churchill",origin:"Homme d'État britannique · 1874-1965"},
+  {text:"Mieux vaut voyager plein d'espoir qu'arriver.",author:"Robert Louis Stevenson",origin:"Écrivain écossais · 1850-1894"},
+  {text:"Sois le changement que tu veux voir dans le monde.",author:"Mahatma Gandhi",origin:"Leader spirituel indien · 1869-1948"},
+  {text:"Il n'y a pas de vent favorable pour celui qui ne sait pas où il va.",author:"Sénèque",origin:"Philosophe romain · 4 av. J.-C. - 65 ap. J.-C."},
+  {text:"Le meilleur moment pour planter un arbre était il y a vingt ans. Le deuxième meilleur moment c'est maintenant.",author:"Proverbe chinois",origin:"Sagesse populaire · Chine"},
+  {text:"Ce qui ne te tue pas te rend plus fort.",author:"Friedrich Nietzsche",origin:"Philosophe allemand · 1844-1900"},
+  {text:"Prends soin de ton corps. C'est le seul endroit où tu aies à vivre.",author:"Jim Rohn",origin:"Entrepreneur américain · 1930-2009"},
+  {text:"La discipline est le pont entre les objectifs et les accomplissements.",author:"Jim Rohn",origin:"Entrepreneur américain · 1930-2009"},
+  {text:"Commence là où tu es. Utilise ce que tu as. Fais ce que tu peux.",author:"Arthur Ashe",origin:"Joueur de tennis américain · 1943-1993"},
+  {text:"Un homme qui ne voyage pas ne peut pas avoir de larges pensées.",author:"Proverbe swahili",origin:"Afrique de l'Est"},
+  {text:"Celui qui se déplace découvre, celui qui reste immobile ne voit que ce qu'il sait.",author:"Proverbe africain",origin:"Tradition orale · Afrique de l'Ouest"},
+  {text:"La santé est la première richesse.",author:"Ralph Waldo Emerson",origin:"Essayiste américain · 1803-1882"},
+  {text:"La connaissance de soi est le début de toute sagesse.",author:"Aristote",origin:"Philosophe grec · 384-322 av. J.-C."},
+  {text:"Chaque jour est une nouvelle chance de tout changer.",author:"Proverbe zen",origin:"Tradition bouddhiste · Japon"},
+  {text:"Il faut toujours viser la lune, car même en cas d'échec, on atterrit dans les étoiles.",author:"Oscar Wilde",origin:"Écrivain irlandais · 1854-1900"},
+  {text:"Le corps humain est capable de presque tout. C'est l'esprit qu'il faut convaincre.",author:"Proverbe sportif",origin:"Tradition athlétique"},
+  {text:"Voyager, c'est vivre.",author:"Hans Christian Andersen",origin:"Auteur danois · 1805-1875"},
+  {text:"La vie est soit une aventure audacieuse, soit rien du tout.",author:"Helen Keller",origin:"Auteure américaine · 1880-1968"},
+  {text:"Ne juge pas chaque journée par ce que tu as récolté mais par les graines que tu as semées.",author:"Robert Louis Stevenson",origin:"Écrivain écossais · 1850-1894"},
+  {text:"Le futur appartient à ceux qui croient à la beauté de leurs rêves.",author:"Eleanor Roosevelt",origin:"Première Dame américaine · 1884-1962"},
+  {text:"Chaque effort que tu fais compte. Le plus petit pas en avant est un pas de moins à faire.",author:"Orison Swett Marden",origin:"Auteur américain · 1850-1924"},
+  {text:"La persévérance n'est pas une longue course ; c'est plusieurs petites courses les unes après les autres.",author:"Walter Elliot",origin:"Homme politique britannique · 1888-1958"},
+  {text:"Les grandes réalisations sont possibles quand on prend soin des petites choses.",author:"Proverbe indien",origin:"Tradition hindoue · Inde"},
+  {text:"Voyage loin assez pour te rencontrer toi-même.",author:"David Mitchell",origin:"Auteur britannique · 1969"},
+  {text:"Souffre maintenant et vis le reste de ta vie comme un champion.",author:"Muhammad Ali",origin:"Boxeur américain · 1942-2016"},
+  {text:"Le secret du changement, c'est de concentrer toute ton énergie non pas à lutter contre le passé, mais à construire l'avenir.",author:"Socrate",origin:"Philosophe grec · 470-399 av. J.-C."},
+  {text:"L'impossible, c'est ce que personne ne peut faire jusqu'à ce que quelqu'un le fasse.",author:"Nelson Mandela",origin:"Président sud-africain · 1918-2013"},
+];
+
+const cit=CITATIONS[dayIdx%CITATIONS.length];
+document.getElementById('citation-text').textContent='"'+cit.text+'"';
+document.getElementById('citation-author').textContent='— '+cit.author;
+document.getElementById('citation-origin').textContent=cit.origin;
+
+// ===== COUNTDOWN =====
+function pad(n,l=2){return String(n).padStart(l,'0')}
+function update(){
+  const now=new Date();
+  const target=new Date('2027-01-01T00:00:00');
+  const start=new Date('2026-06-11T00:00:00');
+  const diff=target-now;
+  if(diff>0){
+    const d=Math.floor(diff/86400000);
+    document.getElementById('cd-d').textContent=pad(d,3);
+    document.getElementById('cd-h').textContent=pad(Math.floor((diff%86400000)/3600000));
+    document.getElementById('cd-m').textContent=pad(Math.floor((diff%3600000)/60000));
+    document.getElementById('cd-s').textContent=pad(Math.floor((diff%60000)/1000));
+    const pct=Math.min(100,Math.max(0,((now-start)/(target-start))*100));
+    document.getElementById('prog-fill').style.width=pct+'%';
+    document.getElementById('prog-pct').textContent=pct.toFixed(1)+'% accompli';
+    const weeks=Math.floor(d/7);
+    document.getElementById('weeks-label').textContent=weeks+' semaines d\'entraînement restantes';
+    document.getElementById('cite-mini').textContent='Jour '+dayIdx+' sur 731';
+  }
+  const jours=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  const mois=['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+  document.getElementById('footer-time').textContent=jours[now.getDay()]+' '+now.getDate()+' '+mois[now.getMonth()]+' '+now.getFullYear()+' · '+now.toLocaleTimeString('fr-FR');
+}
+update();setInterval(update,1000);
+
+// VÉLO DATA
+const VELO_CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vT1ob4j0q0V3gujaGRCCJ74a3kyrS-DKHgsAw2vsBhSte98yKDl1K-OdSSnpvbSOZM5gpe7bl7qVh-n/pub?gid=0&single=true&output=csv';
+async function loadVelo(){
+  try{
+    const r=await fetch(VELO_CSV+'&t='+Date.now(),{cache:'no-store'});
+    const t=await r.text();
+    const lines=t.trim().split('\n');
+    const headers=lines[0].split(',').map(h=>h.trim().replace(/"/g,''));
+    const sorties=lines.slice(1).map(line=>{
+      const vals=line.split(',').map(v=>v.trim().replace(/"/g,''));
+      const obj={};headers.forEach((h,i)=>obj[h]=vals[i]||'');return obj;
+    }).filter(s=>s.date).sort((a,b)=>new Date(a.date)-new Date(b.date));
+    if(sorties.length){
+      const last=sorties[sorties.length-1];
+      document.getElementById('recap-velo-km').textContent=(last.distance_km||'—')+' km';
+      // BPM moyen sur toutes les sorties avec BPM valide
+      const avecBpm=sorties.filter(s=>parseInt(s.BPM)>0);
+      const bpmMoy=avecBpm.length?Math.round(avecBpm.reduce((a,s)=>a+parseInt(s.BPM),0)/avecBpm.length):null;
+      document.getElementById('recap-velo-bpm').textContent=(bpmMoy?bpmMoy+' bpm':'— bpm');
+      const now=new Date();
+      const day=now.getDay()===0?6:now.getDay()-1;
+      const monday=new Date(now);monday.setDate(now.getDate()-day);monday.setHours(0,0,0,0);
+      const weekKm=sorties.filter(s=>{const d=new Date(s.date);return d>=monday}).reduce((a,s)=>a+(parseFloat(s.distance_km)||0),0);
+      document.getElementById('recap-velo-sem').textContent=weekKm.toFixed(1)+' km';
+    }
+  }catch(e){}
+}
+loadVelo();
+
+// ===== DATE BELGE =====
+const TZ='Europe/Brussels';
+function getTodayBE(){return new Date().toLocaleDateString('fr-CA',{timeZone:TZ});}
+
+// ===== NUTRITION =====
+const NUTRI_CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vT1ob4j0q0V3gujaGRCCJ74a3kyrS-DKHgsAw2vsBhSte98yKDl1K-OdSSnpvbSOZM5gpe7bl7qVh-n/pub?gid=1559982846&single=true&output=csv';
+async function loadNutri(){
+  try{
+    const r=await fetch(NUTRI_CSV+'&t='+Date.now(),{cache:'no-store'});
+    const text=await r.text();
+    const lines=text.trim().split('\n');
+    if(lines.length<2)return;
+    const headers=lines[0].split(',').map(h=>h.trim().replace(/"/g,''));
+    const today=getTodayBE();
+    // Dédupliquer par date — garder la dernière ligne
+    const byDate={};
+    lines.slice(1).forEach(line=>{
+      const vals=line.split(',').map(v=>v.trim().replace(/"/g,''));
+      const obj={};headers.forEach((h,i)=>obj[h]=vals[i]||'');
+      if(obj.date)byDate[obj.date]=obj;
+    });
+    const todayRow=byDate[today];
+    if(todayRow){
+      const kcal=parseFloat(todayRow.kcal_total||0).toFixed(0);
+      const prot=parseFloat(todayRow.proteines_g||0).toFixed(0);
+      const obj=parseFloat(todayRow.objectif_kcal||2440);
+      const restant=obj-parseFloat(kcal);
+      document.getElementById('recap-nutri-kcal').textContent=kcal+' / '+obj+' kcal';
+      document.getElementById('recap-nutri-kcal').style.color=restant<0?'#c45555':'rgba(212,168,74,.8)';
+      document.getElementById('recap-nutri-prot').textContent=prot+'g protéines';
+    } else {
+      document.getElementById('recap-nutri-kcal').textContent='Pas encore enregistré';
+      document.getElementById('recap-nutri-prot').textContent='—';
+    }
+  }catch(e){}
+}
+loadNutri();
+
+// ===== CORPS =====
+const CORPS_CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vT1ob4j0q0V3gujaGRCCJ74a3kyrS-DKHgsAw2vsBhSte98yKDl1K-OdSSnpvbSOZM5gpe7bl7qVh-n/pub?gid=610975406&single=true&output=csv';
+async function loadCorps(){
+  try{
+    const r=await fetch(CORPS_CSV+'&t='+Date.now(),{cache:'no-store'});
+    const text=await r.text();
+    const lines=text.trim().split('\n');
+    if(lines.length<2){
+      // Pas de données dans le Sheet — essayer localStorage
+      const local=localStorage.getItem('corps_mesures');
+      if(local){
+        const mesures=JSON.parse(local);
+        if(mesures.length){
+          const last=[...mesures].sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
+          document.getElementById('recap-corps-poids').textContent=last.poids+' kg';
+          document.getElementById('recap-corps-graisse').textContent=last.graisse+'% graisse';
+          const phase=last.poids>105?'Phase 1':last.poids>98?'Phase 2':'Phase 3';
+          document.getElementById('recap-corps-phase').textContent=phase+' en cours';
+        }
+      }
+      return;
+    }
+    const headers=lines[0].split(',').map(h=>h.trim().replace(/"/g,''));
+    const rows=lines.slice(1).map(line=>{
+      const vals=line.split(',').map(v=>v.trim().replace(/"/g,''));
+      const obj={};headers.forEach((h,i)=>obj[h]=vals[i]||'');return obj;
+    }).filter(r=>r.date).sort((a,b)=>new Date(b.date)-new Date(a.date));
+    if(rows.length){
+      const last=rows[0];
+      const poids=parseFloat(last.poids_kg||114).toFixed(1);
+      const graisse=parseFloat(last['masse_grasse_%']||30.2).toFixed(1);
+      const phase=parseFloat(poids)>105?'Phase 1':parseFloat(poids)>98?'Phase 2':'Phase 3';
+      document.getElementById('recap-corps-poids').textContent=poids+' kg';
+      document.getElementById('recap-corps-graisse').textContent=graisse+'% graisse';
+      document.getElementById('recap-corps-phase').textContent=phase+' en cours';
+    } else {
+      document.getElementById('recap-corps-poids').textContent='114 kg (départ)';
+      document.getElementById('recap-corps-graisse').textContent='30.2% graisse';
+      document.getElementById('recap-corps-phase').textContent='Phase 1 en cours';
+    }
+  }catch(e){
+    document.getElementById('recap-corps-poids').textContent='114 kg (départ)';
+    document.getElementById('recap-corps-graisse').textContent='30.2% graisse';
+    document.getElementById('recap-corps-phase').textContent='Phase 1 en cours';
+  }
+}
+loadCorps();
+
+// ===== TRADING =====
+const TRADING_CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vT1ob4j0q0V3gujaGRCCJ74a3kyrS-DKHgsAw2vsBhSte98yKDl1K-OdSSnpvbSOZM5gpe7bl7qVh-n/pub?gid=0&single=true&output=csv';
+function loadTradingRecap(){
+  try{
+    const trades=JSON.parse(localStorage.getItem('trading_trades')||'[]');
+    if(!trades.length){
+      document.getElementById('recap-trading-pnl').textContent='Aucun trade';
+      document.getElementById('recap-trading-trades').textContent='—';
+      document.getElementById('recap-trading-wr').textContent='—';
+      return;
+    }
+    const now=new Date();
+    const day=now.getDay()===0?6:now.getDay()-1;
+    const monday=new Date(now);monday.setDate(now.getDate()-day);monday.setHours(0,0,0,0);
+    const weekTrades=trades.filter(t=>{if(!t.datetime)return false;return new Date(t.datetime)>=monday});
+    const pnl=weekTrades.reduce((a,t)=>a+parseFloat(t.pnl||0),0);
+    const wins=weekTrades.filter(t=>parseFloat(t.pnl||0)>0).length;
+    const wr=weekTrades.length?Math.round(wins/weekTrades.length*100):0;
+    const pnlEl=document.getElementById('recap-trading-pnl');
+    pnlEl.textContent=(pnl>=0?'+':'')+pnl.toFixed(0)+' $';
+    pnlEl.style.color=pnl>=0?'var(--green)':'var(--red)';
+    document.getElementById('recap-trading-trades').textContent=weekTrades.length+' trades';
+    document.getElementById('recap-trading-wr').textContent=weekTrades.length?wr+'%':'—';
+  }catch(e){}
+}
+loadTradingRecap();
+</script>
+</body>
+</html>
